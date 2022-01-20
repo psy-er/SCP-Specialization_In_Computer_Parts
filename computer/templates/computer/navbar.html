@@ -1,0 +1,91 @@
+{% load socialaccount %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-success font-weight-bold">
+        <a class="navbar-brand" href="/">SCP</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/computer/">List</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/about_me/">MyPage</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/intro/">About SCP</a>
+            </li>
+        </ul>
+        <ul class = "navbar-nav ml-auto">
+
+
+            {% if user.is_authenticated %}
+            <ul class = "navbar-nav mr-auto ">
+                <button class="btn btn-outline-dark" type="submit">
+                    <i class="bi-cart-fill me-1"></i>
+                    Cart
+                    <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
+                </button>
+            </ul>
+            <li class="nav-item dropdown mx-3">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {% if user.socialaccount_set.all.0.get_avatar_url %}
+                <img class = "rounded-circle" width="25px"
+                     src="{{user.socialaccount_set.all.0.get_avatar_url}}">
+                {% else %}
+                <img class = "rounded-circle" width="25px"
+                     src="https://doitdjango.com/avatar/id/367/f8b6bb3fdf643ed8/svg/{{user.email}}/">
+
+                {% endif %}
+                {{user.username}}
+                </a>
+                <div class="dropdown-menu bg-success text-center " aria-labelledby="navbarDropdownMenuLink">
+                    <a role="button" class="btn btn-outline-dark" href="/accounts/logout/">
+                        Log out
+                    </a>
+                </div>
+                </li>
+                {% else %}
+                <li class = "nav-item mx-2">
+                    <a role="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#exampleModal">
+                        Log In
+                    </a>
+                </li>
+                {% endif %}
+        </ul>
+        </div>
+    </nav>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-sign-in-alt"></i> &nbsp;&nbsp; Log In</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class = "row">
+                        <div class = "col-md-6">
+                            <a role="button" class = "btn btn-outline-dark btn-block btn-sm"
+                                href="{% provider_login_url 'google' %}">
+                                <i class="fab fa-google"></i>&nbsp;&nbsp;Log in with Google
+                            </a>
+                            <a role="button" class = "btn btn-outline-dark btn-block btn-sm" href="/accounts/login/"><i class="far fa-envelope"></i>&nbsp;&nbsp;Log in with E-mail</a>
+                        </div>
+                        <div class = "col-md-6">
+                            <a role="button" class = "btn btn-outline-dark btn-block btn-sm" href="/accounts/signup/"><i class="far fa-envelope"></i>&nbsp;&nbsp;Sign Up with E-mail </a>
+                        </div>
+                    </div>
+                </div>
+
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+        </div>
+    </div>

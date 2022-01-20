@@ -1,0 +1,132 @@
+{% extends 'computer/base.html' %}
+{% block main_area %}
+
+        <h1>{% if category %} <span class="badge bg-secondary">{{category}}</span> {% endif %} {% if maker %}<span class="badge bg-secondary">{{maker}}</span> {% endif %} </h1>
+        <!-- Header-->
+    <div class="container">
+        <header class="bg-dark py-5 pt-5">
+            <div class="container px-4 px-lg-5">
+                <div class="text-center text-white">
+                    <h1 class="display-4 fw-bolder">SCP</h1>
+                    <p class="lead fw-normal text-white-50">Specialization In Computer Parts</p>
+                </div>
+            </div>
+        </header>
+    </div>
+
+        <!-- Computer Item Section-->
+        <section class="py-0">
+            <div class="container px-3 px-lg-5 mt-5">
+                <div class = "col-20">
+                        {% if user.is_authenticated %}
+                            {% if user.is_staff or user.is_superuser %}
+                                <a class="btn btn-secondary mb-2 " href="/computer/create_item"><i class="fas fa-pen"></i> New Item</a>
+                            {% endif %}
+                        {% endif %}
+                    <!-- Search widget-->
+                            <div class="card mb-2 bg-success " >
+                                <div class="card-body">
+                                <div class="input-group">
+                                    <input class="form-control" type="text" id="search-input" placeholder="Enter search term..." aria-label="Enter search term..." aria-describedby="button-search" />
+                                    <button class="btn btn-secondary" id="button-search" type="button" onclick="searchItem()">Go!</button>
+                                </div>
+                            </div>
+                        </div>
+                    <!-- Categories widget-->
+                        <div class="card mb-2 bg-light" id="categories-card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <ul class = "list-unstyled mb-0">
+                                        {% for c in categories %}
+                                        <a class ="btn btn-success"  href="http://127.0.0.1:8000/computer/category/{{c.slug}}">{{c}} ({{c.item_set.count}})</a>
+                                        {% endfor %}
+                                        <a class ="btn btn-success" href="http://127.0.0.1:8000/computer/category/no_category">미분류 ({{no_category}})</a>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    <!-- Maker widget-->
+                        <div class="card mb-2" id="maker-card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <ul class = "list-unstyled mb-0">
+                                        {% for m in makers %}
+                                        <a class ="btn btn-success" href="http://127.0.0.1:8000/computer/maker/{{m.slug}}">{{m}} ({{m.item_set.count}})</a>
+                                        {% endfor %}
+                                        <a class ="btn btn-success" href="http://127.0.0.1:8000/computer/maker/no_maker">미분류 ({{no_maker}})</a>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% if search_info %} <span class="badge bg-secondary">{{search_info}}</span>{% endif %}
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                    <!-- 상품 -->
+                    {% for p in item_list %}
+                    <div class="col mb-5" id="item-{{p.pk}}">
+                        <div class="card h-100">
+                            <!-- Product images-->
+
+                            {% if p.head_image.url %}
+                                <img class="card-img mb-4 img-fluid w-100" src="{{ p.head_image.url }}" alt="..." />
+                            {% else %}
+                                <img class="card-img mb-4" src="https://picsum.photos/seed/{{p.id}}" alt="..." />
+                            {% endif %}
+
+                            <!-- Product details-->
+                            <div class="card-body mb-4">
+                                <div class="text-center">
+                                    {% if p.category %}
+                                        <span class="badge bg-secondary float-right">{{ p.category }}</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary float-right">미분류</span>
+                                    {% endif %}
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">{{ p.item_name | truncatewords_html:50 | safe}}</h5>
+                                    <!-- Product explanation-->
+                                    <h6>{{p.get_explanation_markdown | truncatechars:50 }}</h6>
+                                    <!-- Product price-->
+                                    {{p.item_price}}
+                                    {{p.item_state}}
+                                    {{p.item_receipt}}
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{{ p.get_absolute_url }}">Details</a></div>
+                            </div>
+                            <div class="card-footer">
+                                <div class = "small text-muted"> {{ p.created_at | date:"20y-m-d" }} by {{p.author | upper}}</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+        <!-- Pagination-->
+        {% if is_paginated %}
+
+        <ul class="pagination justify-content-center my-4">
+            {% if page_obj.has_previous %}
+            <li class="page-item text-dark">
+                <a class="page-link" href="?page={{page_obj.previous_page_number}}" tabindex="-1" aria-disabled="true"> &larr; Newer</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled text-dark">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true"> &larr; Newer</a>
+            </li>
+            {% endif %}
+            {% if page_obj.has_next %}
+            <li class="page-item text-dark">
+                <a class="page-link" href="?page={{page_obj.next_page_number}}"> Older &rarr;</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled text-dark">
+                <a class="page-link" href="#!"> Older &rarr;</a>
+            </li>
+            {% endif %}
+        </ul>
+{% endif %}
+{% endblock %}

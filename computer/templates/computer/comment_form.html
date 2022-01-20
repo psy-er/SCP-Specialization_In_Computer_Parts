@@ -1,0 +1,23 @@
+{% extends 'computer/base.html' %}
+{% load crispy_forms_tags %}
+{% block head_title %}
+    Edit Comment - SCP
+{% endblock %}
+{% block main_area %}
+
+<hr>
+    <div class="container">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="container bg-light row my-3 ">
+                <h1 class="bg-light row my-3">Edit Comment</h1>
+                {{form | crispy}}
+                <br>
+                <button type="submit" class="btn btn-primary row my-3">Edit</button>
+
+            </div>
+        </form>
+    </div>
+    {{form.media}}
+{% endblock %}

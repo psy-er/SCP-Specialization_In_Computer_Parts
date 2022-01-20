@@ -1,0 +1,196 @@
+{% extends 'computer/base.html' %}
+{% load crispy_forms_tags %}
+{% block head_title %}
+    {{ item.item_name }} - SCP
+{% endblock %}
+
+{% block main_area %}
+
+        <!-- Product section-->
+        <div class="py-5 mb-2" id="item-area">
+            <div class="container px-4 px-lg-5 my-5 mb-2">
+                <div class="row gx-4 gx-lg-5 align-items-center mb-2">
+
+
+                    <div class="container-fluid mb-2">
+                        <div class = "col-20">
+                            <!-- Search widget-->
+                            <div class="card mb-2 bg-success " >
+                                <div class="card-body">
+                                <div class="input-group">
+                                    <input class="form-control" type="text" id="search-input" placeholder="Enter search term..." aria-label="Enter search term..." aria-describedby="button-search" />
+                                    <button class="btn btn-secondary" id="button-search" type="button" onclick="searchItem()">Go!</button>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    {% if item.head_image.url %}
+                        <div class="col-md-4 mb-2"><img class="card-img-top mb-5 mb-md-0" src="{{ item.head_image.url }}" alt="{{item}}의 head이미지" /></div>
+                    {% else %}
+                        <div class="col-md-4 mb-2"><img class="card-img-top mb-5 mb-md-0" src="https://picsum.photos/seed/{{item.id}}" alt="random image" /></div>
+                    {% endif %}
+
+                    <div class="col-md-8 bg-dark">
+                        <div class="row-my-3">
+                        <h1 class="display-5 fw-bolder"></h1>
+                        <h1 class="lead bg-light font-weight-bold">{{ item.item_name }}</h1>
+                        <div class="lead bg-light">
+                            {{ item.get_explanation_markdown |safe }}
+                        </div>
+                            <h3 class="lead bg-light font-weight-bold">제조사 : {{ item.maker }}</h3>
+                            <h3 class="lead bg-light font-weight-bold">종류 : {{ item.category }}</h3>
+                            <h3 class="lead bg-light font-weight-bold">상품 상태 : {{ item.item_state }}</h3>
+                            <h3 class="lead bg-light font-weight-bold">영수증 가능 여부 : {{item.item_receipt}}</h3>
+                            <h3 class="lead bg-light font-weight-bold">{{ item.item_price }}원</h3>
+
+                        </div>
+
+                        <div class = "row-my-3 text-muted bg-light float-right">
+                            {{ item.created_at | date:"20y-m-d" }} by {{item.author | upper}}
+                        </div>
+                        <br>
+                        {% if user.is_authenticated %}
+                        <div class="row-my-3 float-left">
+                            <a class="btn btn-secondary float-left my-2" type="button">
+                                <i class="bi-cart-fill me-1"></i>
+                                Add to cart
+                            </a>
+
+                        </div>
+                        {% endif %}
+                        {% if user.is_authenticated and user == item.author %}
+                            <a href ="/computer/update_item/{{item.pk}}/"
+                               class="btn btn-secondary float-right my-2">
+                                <i class="fas fa-pen"></i>
+                                Edit Post
+                            </a>
+                            {% endif %}
+                    </div>
+
+                    <div class="container my-2">
+                        <!-- Categories widget-->
+                        <div class="card mb-2 bg-light" id="categories-card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <ul class = "list-unstyled mb-0">
+                                        {% for c in categories %}
+                                        <a class ="btn btn-success"  href="http://127.0.0.1:8000/computer/category/{{c.slug}}">{{c}} ({{c.item_set.count}})</a>
+                                        {% endfor %}
+                                        <a class ="btn btn-success" href="http://127.0.0.1:8000/computer/category/no_category">미분류 ({{no_category}})</a>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    <!-- Maker widget-->
+                        <div class="card mb-2" id="maker-card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <ul class = "list-unstyled mb-0">
+                                        {% for c in makers %}
+                                        <a class ="btn btn-success" href="http://127.0.0.1:8000/computer/maker/{{c.slug}}">{{c}} ({{c.item_set.count}})</a>
+                                        {% endfor %}
+                                        <a class ="btn btn-success" href="http://127.0.0.1:8000/computer/maker/no_maker">미분류 ({{no_maker}})</a>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    <!-- Comments section-->
+                        <div class="mb-5" id="comment-area">
+                            <div class="card bg-light">
+                            <div class="card-body">
+                            <!-- Comment form-->
+                                {% if user.is_authenticated %}
+
+                                <form class="mb-1" id="comment-form" method="POST" action="{{item.get_absolute_url}}new_comment/">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        {{comment_form | crispy}}
+                                    </div>
+                                    <div class="float-right">
+                                    <button type="submit" class="btn btn-secondary">Submit</button>
+                                    </div>
+                                    <br>
+                                </form>
+                                {% else %}
+                                    <a role="button" class="btn btn-secondary" href="#"
+                                       data-toggle="modal" data-target="#loginModal"
+                                    >Log in and leave a comment</a>
+                                {% endif %}
+
+
+                            <section>
+                                <!-- Comment with nested comments-->
+                                {% if item.comment_set.exists %}
+                                {% for c in item.comment_set.all %}
+
+                                <div class="d-flex mb-4">
+                                    <!-- Parent comment-->
+                                    <div class="d-flex" id="comment-{{c.pk}}">
+                                        <div class="flex-shrink-0">
+                                            <img class="rounded-circle" src="{{c.get_avatar_url}}" alt="{{c.author}}" width="60px"/>
+                                        </div>
+
+                                    <div class="ms-3">
+                                            <div class="fw-bold">{{c.author.username}} &nbsp;&nbsp;<small class="text-muted">{{c.created_at}}</small>
+
+                                                {% if user.is_authenticated and user == c.author %}
+                                                <div class="float-right mx-1">
+                                                    <a href="/computer/{{c.pk}}/update_comment/">
+                                                        <button type="submit" class="btn btn-success btn-sm">Edit</button>
+                                                    </a>
+                                                </div>
+                                                {% endif %}
+                                                {% if user.is_authenticated and user == c.author %}
+                                                <div class="float-right mx-1">
+                                                    <button type="submit" class="btn btn-success btn-sm">Delete</button>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                            <p>{{c.content | linebreaks }}</p>
+
+                                            {% if user.is_authenticated and user == c.author %}
+                                            <div class="float-right mx-1">
+                                                <a href="/computer/{{c.pk}}/update_comment/">
+                                                    <button type="submit" class="btn btn-success btn-sm">Edit</button>
+                                                </a>
+                                            </div>
+                                            {% endif %}
+                                            {% if user.is_authenticated and user == c.author %}
+                                            <div class="float-right mx-1">
+                                                <button type="submit" class="btn btn-success btn-sm">Delete</button>
+                                            </div>
+                                            {% endif %}
+
+                                        <!-- Child comment 1-->
+
+                                        <div class="d-flex mt-4">
+                                            <div class="flex-shrink-0">
+                                                <img class="rounded-circle" src="{{c.get_avatar_url}}" alt="{{c.author}}" width="60px"/>
+                                            </div>
+                                            <div class="ms-3">
+                                                <div class="fw-bold">{{c.author.username}} &nbsp;&nbsp;<small class="text-muted">{{c.created_at}}</small></div>
+                                                <p>{{c.content | linebreaks }}</p>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                {% endif %}
+                            </section>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+
+{% endblock %}

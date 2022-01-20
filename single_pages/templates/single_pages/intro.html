@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>About SCP</title>
+    <link href = "{% static 'computer/bootstrap/bootstrap.min.css' %}" rel = "stylesheet" type = "text/css" media="screen">
+    <link href="{% static 'single_pages/css/landing.css' %}" rel = "stylesheet" type = "text/css" media="screen">
+    <script src="https://kit.fontawesome.com/0df8adaa6b.js" crossorigin="anonymous"></script>
+    <!--Chart.js-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+</head>
+<body>
+
+{% include 'computer/navbar.html'%}
+
+<section>
+    <div class="container mt-4">
+        <div class="row mb-5">
+            <div class="col-8 bg-dark text-light">
+                <br><br>
+                <h1>SCP</h1>
+                <h2>Special Computer Part</h2>
+                <h4>SCP는 컴퓨터, 컴퓨터 부품을 세계적으로 수출하는</h4>
+                <h4>글로벌 기업이 되겠습니다.</h4>
+                <br><br><br>
+                <h6 class="float-right">-SCP 대표이사 박세연-</h6>
+            </div>
+            <div class="col-4">
+                <img class="img-fluid" style="width:360px; height:360px;" src="{% static 'single_pages/images/me.jpg'%}">
+            </div>
+        </div>
+
+
+        <div class="row mb-5">
+            <div class="col-4">
+                <div class="card" data-toggle="modal" data-target="#portfolio1">
+                    <img class="card-img-top" style="width:350px; height:300px;" src="{% static 'single_pages/images/mainboard.jpg' %}">
+                    <div class="card-body bg-light">
+                        <h5 class="card-title font-weight-bold">컴퓨터 부품</h5>
+                        <p>CPU, HDD, SSD, MainBoard 등 다양한 컴퓨터 부품 구매 가능</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card" data-toggle="modal" data-target="#portfolio2">
+                    <img class="card-img-top" style="width:350px; height:300px;" src="{% static 'single_pages/images/computer.jpg' %}">
+                    <div class="card-body bg-light">
+                        <h5 class="card-title font-weight-bold">컴퓨터</h5>
+                        <p>컴퓨터, 키보드, 마우스 등 다양한 상품 구매 가능</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="card" data-toggle="modal" data-target="#portfolio3">
+                    <img class="card-img-top" style="width:350px; height:300px;" src="{% static 'single_pages/images/company.jpg' %}">
+                    <div class="card-body bg-light">
+                        <h5 class="card-title font-weight-bold">SCP</h5>
+                        <p>삼성전자, 인텔, 이엠텍, MSI, 키오시아, ASUS와 함께합니다.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Modal1 -->
+<div class="modal fade" id="portfolio1" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel1">컴퓨터 부품</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-lg-12">
+
+            <!--Chart row / col 6:6-->
+            <div class = "container">
+                <div class="row my-2">
+                    <div class="col-lg-6">
+                        <div class = "card">
+                            <div class="card-body">
+                                <canvas id="myChart"></canvas>
+                            </div>
+                            <div class="card-footer">
+                                <h6>Bar chart</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class = "card">
+                            <div class="card-body">
+                                <canvas id="myChart2"></canvas>
+                            </div>
+                            <div class="card-footer">
+                                <h6>Doughnut chart</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--Chart.js 차트-->
+            <script>
+                data = {
+                    labels:['CPU', '쿨러','메인보드','메모리','SSD','HDD','그래픽카드','미분류'], //x축
+                    datasets:[{label: 'Item Num', data : [4,1,4,3,2,3,3,0], //y축
+                    backgroundColor: ['rgba(225,99,132)','rgba(54,162,235)','rgba(225,206,86)','rgba(75,192,192)','rgba(153,102,255)','rgba(225,159,64)','rgba(225,99,132)','rgba(54,162,235)'],
+                    borderColor: ['rgba(225,99,132,1.0)','rgba(54,162,235,1.0)','rgba(225,206,86,1.0)','rgba(75,192,192,1.0)','rgba(153,102,255,1.0)','rgba(225,159,64,1.0)','rgba(225,99,132,1.0)','rgba(54,162,235,1.0)'],
+                    borderWidth:1  //a = 0.2, 1.0 투명도 차이
+                }]
+                };
+                var ctx = document.getElementById('myChart');
+                var myChart = new Chart(ctx,{
+                    type: 'bar',
+                    data: data,
+                    options :
+                        {scales: {
+                            yAxes: [{ticks: {beginAtZero: true}}]
+                    }
+                    }
+                });
+                var ctx2 = document.getElementById('myChart2');
+                var myChart2 = new Chart(ctx2,{
+                    type: 'doughnut',
+                    data: data,
+                    options:{
+                    }
+                });
+            </script>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal2 -->
+<div class="modal fade" id="portfolio2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel2">컴퓨터</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-lg-7">
+                <img class="card-img-top" src="{% static 'single_pages/images/computer.jpg' %}">
+            </div>
+            <div class="col-lg-5">
+                <p>컴퓨터, 키보드, 마우스 등 다양한 상품 구매 가능</p>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal3 -->
+<div class="modal fade" id="portfolio3" tabindex="-1" aria-labelledby="exampleModalLabel3" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel3">SCP</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <div class="col-lg-7">
+                <img class="card-img-top" src="{% static 'single_pages/images/company.jpg' %}">
+            </div>
+            <div class="col-lg-5">
+                <p>삼성전자, 인텔, 이엠텍, MSI, 키오시아, ASUS와 함께합니다.</p>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% include 'computer/footer.html'%}
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
+
+</body>
+</html>
